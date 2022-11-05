@@ -27,6 +27,7 @@ export default {
 <template>
 
     <div v-if="store.errorMessage.length > 0" class="message">{{ store.errorMessage }}</div>
+    <div v-else>Current player {{ store.currentPlayer }}</div>
     <div class="grid">
         <GridSquare v-for="i in (rows * 3)" :number="i" :class="{ winning: checkWinningCondition(i) }" />
     </div>
