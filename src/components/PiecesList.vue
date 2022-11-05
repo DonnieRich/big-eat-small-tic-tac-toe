@@ -55,12 +55,17 @@ export default {
     list-style: none;
     display: flex;
     width: 100%;
+    padding: 50px;
 }
 
 .piece {
     width: calc(100% / 3);
+    height: 80px;
     border: 1px solid grey;
-    background-color: #FFF;
+    background-color: #ffffc1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .active {
