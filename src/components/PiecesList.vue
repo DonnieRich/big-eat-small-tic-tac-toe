@@ -6,6 +6,7 @@ export default {
             store,
             selectedPiece: {},
             currentPieceIndex: -1,
+            lastPlayer: '',
         }
     },
     methods: {
@@ -21,6 +22,7 @@ export default {
                 const pieceIndex = store.getPieces().findIndex( (storePiece) => storePiece.type === this.selectedPiece.type && storePiece.value === this.selectedPiece.value );
                 store.setSelectedPieceIndex(pieceIndex);
                 store.setCurrentPiece(this.selectedPiece);
+                this.lastPlayer = store.currentPlayer;
             } else {
                 store.setSelectedPieceIndex(null);
             }
@@ -30,6 +32,11 @@ export default {
         getAvailablePieces() {
             return store.getPieces().filter(piece => piece.type === store.currentPlayer && piece.available > 0);
         },
+    },
+    updated() {
+        if (this.lastPlayer !== store.currentPlayer) {
+            this.currentPieceIndex = -1;
+        }
     }
 }
 </script>
