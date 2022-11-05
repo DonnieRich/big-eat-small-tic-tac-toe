@@ -73,6 +73,10 @@ export default {
     background-color: #FFF;
     border: 1px solid grey;
     flex-basis: calc(100% / 3);
+    aspect-ratio: 1 / 1 ;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .type-blue {
