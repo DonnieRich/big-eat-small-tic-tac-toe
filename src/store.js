@@ -4,7 +4,6 @@ import { reactive } from 'vue'
 export const store = reactive({
     currentPlayer: 'B',
     currentPiece: {},
-    startingPieces: [],
     gridSquares: [],
     pieces: [
         {
@@ -58,7 +57,7 @@ export const store = reactive({
         [3, 5, 7],
     ],
     victoryConditionIndex: -1,
-    victorySquares: [],
+    gameEnded: false,
 
     setCurrentPlayer(player) {
         this.currentPlayer = player;
@@ -67,6 +66,12 @@ export const store = reactive({
         const player = this.currentPlayer === 'B' ? 'R' : 'B';
         this.setCurrentPlayer(player);
         this.clearSelectedPieceIndex();
+    },
+    getCurrentPiece() {
+        return { ...this.currentPiece };
+    },
+    getPieces() {
+        return this.pieces;
     },
     setCurrentPiece(piece) {
         this.currentPiece = { ...piece };
@@ -92,11 +97,42 @@ export const store = reactive({
     },
     checkVictoryConditions() {
         // checking...
-        // this.victoryConditionIndex = X;
-        return false;
+        const currentPlayerSquares = this.gridSquares.filter( (square) => square.value === this.currentPlayer );
+        
+        if(currentPlayerSquares.length >= 3) {
+
+            this.victoryConditionIndex = this.victoryConditions.findIndex( (condition) => {
+    
+                const checkedCondition = currentPlayerSquares.filter( (square) => condition.includes(square.position) );
+                
+                return checkedCondition.length === 3;
+            
+            });
+
+        }
+
+        return this.victoryConditionIndex > -1 ? true : false;
+
     },
-    setVictorySquares(index) {
-        this.victorySquares = [...this.victoryConditions[this.victoryConditionIndex]];
+    updateRemainingPieces() {
+        this.pieces[this.selectedPieceIndex].available--;
+    },
+    updateSquares(square) {
+        const index = this.gridSquares.findIndex( (gridSquare) => gridSquare.position === square.position);
+        if (index > -1) {
+            this.gridSquares[index] = square;
+        } else {
+            this.gridSquares.push(square);
+        }
+    },
+    getVictoryCondition() {
+        return this.victoryConditionIndex > -1 ? this.victoryConditions[this.victoryConditionIndex] : [];
+    },
+    isGameEnded() {
+        return this.gameEnded;
+    },
+    endGame() {
+        this.gameEnded = true;
     }
 
 })

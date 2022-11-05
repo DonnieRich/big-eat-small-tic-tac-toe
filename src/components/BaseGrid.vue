@@ -5,15 +5,21 @@ export default {
     data() {
         return {
             store,
-            rows: 3
+            rows: 3,
+            winningCondition: []
         }
     },
     components: {
         GridSquare,
     },
-    computed: {
-
+    methods: {
+        checkWinningCondition(index) {
+            return this.winningCondition.includes(index);
+        }
     },
+    updated() {
+        this.winningCondition = store.getVictoryCondition();
+    }
 
 }
 </script>
@@ -22,7 +28,7 @@ export default {
 
     <div v-if="store.errorMessage.length > 0" class="message">{{ store.errorMessage }}</div>
     <div class="grid">
-        <GridSquare v-for="i in (rows * 3)" :number="i" />
+        <GridSquare v-for="i in (rows * 3)" :number="i" :class="{ winning: checkWinningCondition(i) }" />
     </div>
 
 </template>
@@ -34,5 +40,8 @@ export default {
     width: 500px;
     height: 500px;
     margin: 0 auto;
+}
+.winning {
+    background-color: orange;
 }
 </style>

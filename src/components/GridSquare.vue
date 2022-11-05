@@ -19,27 +19,40 @@ export default {
             return this.currentPiece.value ?? 0;
         },
         setCurrentPiece() {
-            if (store.currentPiece.value - this.checkCurrentPiece() === 1 && this.currentPiece.type !== store.currentPiece.type) {
-                store.clearErrorMessage();
-                this.currentPiece = { ...store.currentPiece };
-                if (!store.checkVictoryConditions()) {
-                    store.changePlayer();
+            if (!store.isGameEnded()) {
+                if (this.checkMove() && this.currentPiece.type !== store.getCurrentPiece().type) {
+                    store.clearErrorMessage();
+                    store.updateRemainingPieces();
+                    this.currentPiece = store.getCurrentPiece();
+                    store.updateSquares({ value: this.currentPiece.type, position: this.number});
+                    if (!store.checkVictoryConditions()) {
+                        store.changePlayer();
+                    } else {
+                        store.setErrorMessage(`Player ${store.currentPlayer} win!`);
+                        store.endGame();
+                    }
                 } else {
-                    store.setErrorMessage(`Player ${store.currentPlayer} win!`)
+                    store.setErrorMessage('Invalid move');
                 }
-            } else {
-                store.setErrorMessage('Invalid move');
             }
         },
         getCurrentType() {
             return this.currentPiece.type ?? '';
+        },
+        checkMove() {
+            const moveDelta = store.getCurrentPiece().value - this.checkCurrentPiece();
+            const smallestPieceAvailable = store.getPieces().find( (piece) => piece.available > 0 && piece.type === store.currentPlayer);
+            const smallestAvailableDelta = smallestPieceAvailable.value - this.checkCurrentPiece();
+
+            return moveDelta === smallestAvailableDelta && moveDelta > 0;
+
         }
     },
     computed: {
 
     },
     mounted() {
-        store.setGridSquare(this.number);
+        //store.setGridSquare(this.number);
     }
 }
 </script>
@@ -69,4 +82,5 @@ export default {
 .type-red {
     color: red;
 }
+
 </style>

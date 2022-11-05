@@ -4,23 +4,31 @@ export default {
     data() {
         return {
             store,
+            selectedPiece: {},
+            currentPieceIndex: -1,
         }
     },
     methods: {
-        setSelectedPiece(index) {
-
-            if (this.getAvailablePieces[index].type === store.currentPlayer) {
-                store.setSelectedPieceIndex(index);
-                store.setCurrentPiece(this.getAvailablePieces[index]);
+        setSelectedPiece(piece, index) {
+            if (!store.isGameEnded()) {
+                this.selectedPiece = { ...piece };
+                this.currentPieceIndex = index;
+                this.updateSelectedPiece();
+            }
+        },
+        updateSelectedPiece() {
+            if (this.selectedPiece.type === store.currentPlayer) {
+                const pieceIndex = store.getPieces().findIndex( (storePiece) => storePiece.type === this.selectedPiece.type && storePiece.value === this.selectedPiece.value );
+                store.setSelectedPieceIndex(pieceIndex);
+                store.setCurrentPiece(this.selectedPiece);
             } else {
                 store.setSelectedPieceIndex(null);
             }
-
         }
     },
     computed: {
         getAvailablePieces() {
-            return store.pieces.filter(piece => piece.type === store.currentPlayer && piece.available > 0);
+            return store.getPieces().filter(piece => piece.type === store.currentPlayer && piece.available > 0);
         },
     }
 }
@@ -28,8 +36,8 @@ export default {
 
 <template>
     <ul class="list-pieces">
-        <li v-for="(piece, index) in getAvailablePieces" :key="index" class="piece" @click="setSelectedPiece(index)"
-            :class="{ 'type-blue': piece.type === 'B', 'type-red': piece.type === 'R', 'active': store.currentPlayer === piece.type, 'selected': store.selectedPieceIndex === index }">
+        <li v-for="(piece, index) in getAvailablePieces" :key="index" class="piece" @click="setSelectedPiece(piece, index)"
+            :class="{ 'type-blue': piece.type === 'B', 'type-red': piece.type === 'R', 'active': store.currentPlayer === piece.type, 'selected': this.currentPieceIndex === index }">
             {{ piece.placeholder }}</li>
 
     </ul>
