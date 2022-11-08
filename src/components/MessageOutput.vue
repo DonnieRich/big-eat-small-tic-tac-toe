@@ -6,16 +6,11 @@ export default {
             store,
         }
     },
-    methods: {
-        hideErrorMessage() {
-            store.clearErrorMessage();
-        }
-    }
 }
 </script>
 
 <template>
-    <div v-if="store.errorMessage.length > 0" class="message" @click="hideErrorMessage()">
+    <div v-if="store.errorMessage.length > 0" class="message">
         {{ store.errorMessage }}
     </div>
 </template>
