@@ -20,11 +20,11 @@ export default {
         },
         setCurrentPiece() {
             if (!store.isGameEnded()) {
-                if (this.checkMove() && this.currentPiece.type !== store.getCurrentPiece().type) {
+                if (this.checkMove()) {
                     store.clearErrorMessage();
                     store.updateRemainingPieces();
                     this.currentPiece = store.getCurrentPiece();
-                    store.updateSquares({ value: this.currentPiece.type, position: this.number});
+                    store.updateSquares({ value: this.currentPiece.type, position: this.number });
                     if (!store.checkVictoryConditions()) {
                         store.changePlayer();
                     } else {
@@ -40,11 +40,13 @@ export default {
             return this.currentPiece.type ?? '';
         },
         checkMove() {
-            const moveDelta = store.getCurrentPiece().value - this.checkCurrentPiece();
+            /*const moveDelta = store.getCurrentPiece().value - this.checkCurrentPiece();
             const smallestPieceAvailable = store.getPieces().find( (piece) => piece.available > 0 && piece.type === store.currentPlayer);
-            const smallestAvailableDelta = smallestPieceAvailable.value - this.checkCurrentPiece();
+            const smallestAvailableDelta = smallestPieceAvailable.value - this.checkCurrentPiece();*/
 
-            return moveDelta === smallestAvailableDelta && moveDelta > 0;
+            //return moveDelta === smallestAvailableDelta && moveDelta > 0;
+
+            return store.getCurrentPiece().value > this.checkCurrentPiece() && this.currentPiece.type !== store.getCurrentPiece().type;
 
         }
     },
@@ -73,7 +75,7 @@ export default {
     background-color: #FFF;
     border: 1px solid grey;
     flex-basis: calc(100% / 3);
-    aspect-ratio: 1 / 1 ;
+    aspect-ratio: 1 / 1;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -86,5 +88,4 @@ export default {
 .type-red {
     color: red;
 }
-
 </style>
