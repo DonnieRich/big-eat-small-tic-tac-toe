@@ -6,7 +6,7 @@ import PiecesList from './components/PiecesList.vue';
 export default {
     data() {
         return {
-
+            version: __APP_VERSION__
         }
     },
     components: {
@@ -23,6 +23,7 @@ export default {
 <template>
     <BaseGrid />
     <PiecesList />
+    <small>App version: {{ version }}</small>
 </template>
 
 <style>
