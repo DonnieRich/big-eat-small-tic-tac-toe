@@ -46,7 +46,11 @@ export default {
         <li v-for="(piece, index) in getAvailablePieces" :key="index" class="piece"
             @click="setSelectedPiece({ ...piece }, index)"
             :class="{ 'type-blue': piece.type === 'B', 'type-red': piece.type === 'R', 'active': store.currentPlayer === piece.type, 'selected': this.currentPieceIndex === index }">
-            {{ piece.placeholder }}</li>
+            <div class="piece-item">
+                <span>Available: {{ piece.available }}</span>
+                <span>{{ piece.placeholder }}</span>
+            </div>
+        </li>
 
     </ul>
 </template>
@@ -57,6 +61,7 @@ export default {
     display: flex;
     width: 100%;
     padding: 50px;
+    justify-content: center;
 }
 
 .piece {
@@ -67,6 +72,21 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.piece-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.piece-item span:first-child {
+    color: black;
+    font-size: 0.75rem;
+}
+
+.piece-item span:last-child {
+    font-size: 1rem;
+    font-weight: bold;
 }
 
 .active {
