@@ -6,19 +6,10 @@ export default {
         return {
             store,
             rows: 3,
-            winningCondition: []
         }
     },
     components: {
         GridSquare,
-    },
-    methods: {
-        checkWinningCondition(index) {
-            return this.winningCondition.includes(index);
-        }
-    },
-    updated() {
-        this.winningCondition = store.getVictoryCondition();
     }
 
 }
@@ -29,7 +20,8 @@ export default {
     <div v-if="store.errorMessage.length > 0" class="message">{{ store.errorMessage }}</div>
     <div v-else>Current player {{ store.currentPlayer }}</div>
     <div class="grid">
-        <GridSquare v-for="i in (rows * 3)" :number="i" :class="{ winning: checkWinningCondition(i) }" />
+        <GridSquare v-for="i in (rows * 3)" :number="i"
+            :class="{ 'winning': store.getVictoryCondition().includes(i) }" />
     </div>
 
 </template>
@@ -42,6 +34,7 @@ export default {
     height: 500px;
     margin: 0 auto;
 }
+
 .winning {
     background-color: orange;
 }

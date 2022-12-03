@@ -57,6 +57,7 @@ export const store = reactive({
         [3, 5, 7],
     ],
     victoryConditionIndex: -1,
+    victoryCondition: [],
     gameEnded: false,
 
     setCurrentPlayer(player) {
@@ -74,7 +75,7 @@ export const store = reactive({
         return this.pieces;
     },
     setCurrentPiece(piece) {
-        this.currentPiece = { ...piece };
+        this.currentPiece = piece;
     },
     setSelectedPieceIndex(index) {
         this.selectedPieceIndex = index;
@@ -97,19 +98,21 @@ export const store = reactive({
     },
     checkVictoryConditions() {
         // checking...
-        const currentPlayerSquares = this.gridSquares.filter( (square) => square.value === this.currentPlayer );
-        
-        if(currentPlayerSquares.length >= 3) {
+        const currentPlayerSquares = this.gridSquares.filter((square) => square.value === this.currentPlayer);
 
-            this.victoryConditionIndex = this.victoryConditions.findIndex( (condition) => {
-    
-                const checkedCondition = currentPlayerSquares.filter( (square) => condition.includes(square.position) );
-                
+        if (currentPlayerSquares.length >= 3) {
+
+            this.victoryConditionIndex = this.victoryConditions.findIndex((condition) => {
+
+                const checkedCondition = currentPlayerSquares.filter((square) => condition.includes(square.position));
+
                 return checkedCondition.length === 3;
-            
+
             });
 
         }
+
+        this.setVictoryCondition();
 
         return this.victoryConditionIndex > -1 ? true : false;
 
@@ -118,7 +121,7 @@ export const store = reactive({
         this.pieces[this.selectedPieceIndex].available--;
     },
     updateSquares(square) {
-        const index = this.gridSquares.findIndex( (gridSquare) => gridSquare.position === square.position);
+        const index = this.gridSquares.findIndex((gridSquare) => gridSquare.position === square.position);
         if (index > -1) {
             this.gridSquares[index] = square;
         } else {
@@ -126,7 +129,10 @@ export const store = reactive({
         }
     },
     getVictoryCondition() {
-        return this.victoryConditionIndex > -1 ? this.victoryConditions[this.victoryConditionIndex] : [];
+        return [...this.victoryCondition];
+    },
+    setVictoryCondition() {
+        this.victoryCondition = this.victoryConditionIndex > -1 ? [...this.victoryConditions[this.victoryConditionIndex]] : [];
     },
     isGameEnded() {
         return this.gameEnded;
