@@ -71,7 +71,7 @@ export default {
     <div class="square" @click="setCurrentPiece()">
 
         <span v-if="checkCurrentPiece() > 0" :class="pieceClasses">
-            {{ currentPiece.placeholder }}
+
         </span>
 
     </div>
@@ -88,11 +88,58 @@ export default {
     align-items: center;
 }
 
+/* TODO - Gestire background-color degli pseudo elementi */
 .type-blue {
     color: blue;
 }
 
 .type-red {
     color: red;
+}
+
+.small-piece,
+.medium-piece,
+.big-piece {
+    width: 60%;
+    height: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.small-piece:before,
+.small-piece:after {
+    content: ' ';
+    height: 33%;
+    width: 2%;
+    display: block;
+}
+
+.medium-piece:before,
+.medium-piece:after {
+    content: ' ';
+    height: 66%;
+    width: 4%;
+    display: block;
+}
+
+.big-piece:before,
+.big-piece:after {
+    content: ' ';
+    height: 99%;
+    width: 8%;
+    display: block;
+}
+
+.small-piece:before,
+.medium-piece:before,
+.big-piece:before {
+    transform: rotate(45deg);
+}
+
+.small-piece:after,
+.medium-piece:after,
+.big-piece:after {
+    transform: rotate(-45deg);
 }
 </style>
