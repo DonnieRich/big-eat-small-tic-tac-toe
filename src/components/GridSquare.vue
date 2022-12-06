@@ -51,7 +51,15 @@ export default {
         }
     },
     computed: {
-
+        pieceClasses() {
+            return {
+                'type-blue': this.currentPiece.type === 'B',
+                'type-red': this.currentPiece.type === 'R',
+                'small-piece': this.currentPiece.value === 1,
+                'medium-piece': this.currentPiece.value === 2,
+                'big-piece': this.currentPiece.value === 3,
+            }
+        }
     },
     mounted() {
         //store.setGridSquare(this.number);
@@ -62,8 +70,7 @@ export default {
 <template>
     <div class="square" @click="setCurrentPiece()">
 
-        <span v-if="checkCurrentPiece() > 0"
-            :class="{ 'type-blue': currentPiece.type === 'B', 'type-red': currentPiece.type === 'R' }">
+        <span v-if="checkCurrentPiece() > 0" :class="pieceClasses">
             {{ currentPiece.placeholder }}
         </span>
 
