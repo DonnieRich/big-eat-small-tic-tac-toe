@@ -36,6 +36,6 @@ export default {
 }
 
 .winning {
-    background-color: orange;
+    background-color: #67FA19;
 }
 </style>

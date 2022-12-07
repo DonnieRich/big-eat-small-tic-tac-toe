@@ -1,5 +1,6 @@
 <script>
 import { store } from '../store';
+import BasePiece from './BasePiece.vue';
 export default {
     data() {
         return {
@@ -7,6 +8,9 @@ export default {
             isOccupied: false,
             currentPiece: {},
         }
+    },
+    components: {
+        BasePiece,
     },
     props: {
         number: Number,
@@ -51,18 +55,9 @@ export default {
         }
     },
     computed: {
-        pieceClasses() {
-            return {
-                'type-blue': this.currentPiece.type === 'B',
-                'type-red': this.currentPiece.type === 'R',
-                'small-piece': this.currentPiece.value === 1,
-                'medium-piece': this.currentPiece.value === 2,
-                'big-piece': this.currentPiece.value === 3,
-            }
-        }
+
     },
     mounted() {
-        //store.setGridSquare(this.number);
     }
 }
 </script>
@@ -70,9 +65,7 @@ export default {
 <template>
     <div class="square" @click="setCurrentPiece()">
 
-        <span v-if="checkCurrentPiece() > 0" :class="pieceClasses">
-
-        </span>
+        <BasePiece v-if="checkCurrentPiece() > 0" :piece="currentPiece"></BasePiece>
 
     </div>
 </template>
@@ -86,60 +79,5 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-/* TODO - Gestire background-color degli pseudo elementi */
-.type-blue {
-    color: blue;
-}
-
-.type-red {
-    color: red;
-}
-
-.small-piece,
-.medium-piece,
-.big-piece {
-    width: 60%;
-    height: 60%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.small-piece:before,
-.small-piece:after {
-    content: ' ';
-    height: 33%;
-    width: 2%;
-    display: block;
-}
-
-.medium-piece:before,
-.medium-piece:after {
-    content: ' ';
-    height: 66%;
-    width: 4%;
-    display: block;
-}
-
-.big-piece:before,
-.big-piece:after {
-    content: ' ';
-    height: 99%;
-    width: 8%;
-    display: block;
-}
-
-.small-piece:before,
-.medium-piece:before,
-.big-piece:before {
-    transform: rotate(45deg);
-}
-
-.small-piece:after,
-.medium-piece:after,
-.big-piece:after {
-    transform: rotate(-45deg);
 }
 </style>
