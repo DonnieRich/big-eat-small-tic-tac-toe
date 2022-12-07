@@ -1,5 +1,6 @@
 <script>
 import { store } from '../store';
+import BasePiece from './BasePiece.vue';
 export default {
     data() {
         return {
@@ -8,6 +9,9 @@ export default {
             currentPieceIndex: -1,
             lastPlayer: '',
         }
+    },
+    components: {
+        BasePiece,
     },
     methods: {
         setSelectedPiece(piece, index) {
@@ -32,6 +36,15 @@ export default {
         getAvailablePieces() {
             return store.getPieces().filter(piece => piece.type === store.currentPlayer && piece.available > 0);
         },
+        pieceItemClasses() {
+            return {
+                'blue-piece': this.piece.type === 'B',
+                'red-piece': this.piece.type === 'R',
+                'small-piece': this.piece.value === 1,
+                'medium-piece': this.piece.value === 2,
+                'big-piece': this.piece.value === 3,
+            }
+        }
     },
     updated() {
         if (this.lastPlayer !== store.currentPlayer) {
@@ -43,13 +56,11 @@ export default {
 
 <template>
     <ul class="list-pieces">
-        <li v-for="(piece, index) in getAvailablePieces" :key="index" class="piece"
+        <li v-for="(piece, index) in getAvailablePieces" :key="index" class="piece-item"
             @click="setSelectedPiece({ ...piece }, index)"
-            :class="{ 'type-blue': piece.type === 'B', 'type-red': piece.type === 'R', 'active': store.currentPlayer === piece.type, 'selected': this.currentPieceIndex === index }">
-            <div class="piece-item">
-                <span>Available: {{ piece.available }}</span>
-                <span>{{ piece.placeholder }}</span>
-            </div>
+            :class="{ 'blue-piece': piece.type === 'B', 'red-piece': piece.type === 'R', 'active': store.currentPlayer === piece.type, 'selected': this.currentPieceIndex === index }">
+            <span>Available: {{ piece.available }}</span>
+            <BasePiece :piece="piece"></BasePiece>
         </li>
 
     </ul>
@@ -64,29 +75,19 @@ export default {
     justify-content: center;
 }
 
-.piece {
+.piece-item {
     width: calc(100% / 3);
-    height: 80px;
-    border: 1px solid grey;
+    aspect-ratio: 1 / 1;
     background-color: #ffffc1;
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.piece-item {
-    display: flex;
     flex-direction: column;
 }
 
-.piece-item span:first-child {
-    color: black;
-    font-size: 0.75rem;
-}
-
-.piece-item span:last-child {
-    font-size: 1rem;
-    font-weight: bold;
+.piece-holder {
+    width: 100%;
+    height: 100%;
 }
 
 .active {
@@ -97,11 +98,11 @@ export default {
     background-color: aquamarine;
 }
 
-.type-blue {
-    color: blue;
+.blue-piece {
+    color: #061735;
 }
 
-.type-red {
-    color: red;
+.red-piece {
+    color: #AE0000;
 }
 </style>
