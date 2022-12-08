@@ -13,7 +13,8 @@ export default {
         BasePiece,
     },
     props: {
-        number: Number,
+        coords: Array,
+        index: Number,
     },
     methods: {
         setOccupied() {
@@ -28,7 +29,7 @@ export default {
                     store.clearErrorMessage();
                     store.updateRemainingPieces();
                     this.currentPiece = store.getCurrentPiece();
-                    store.updateSquares({ value: this.currentPiece.type, position: this.number });
+                    store.updateSquares({ value: this.currentPiece.type, position: [...this.coords] });
                     if (!store.checkVictoryConditions()) {
                         store.changePlayer();
                     } else {

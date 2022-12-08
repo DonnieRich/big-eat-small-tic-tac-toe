@@ -5,11 +5,23 @@ export default {
     data() {
         return {
             store,
-            rows: 3,
+            gridSquares: []
         }
     },
     components: {
         GridSquare,
+    },
+    mounted() {
+        this.generateSquares();
+    },
+    methods: {
+        generateSquares() {
+            for (let x = 0; x < this.store.rows; x++) {
+                for (let y = 0; y < this.store.rows; y++) {
+                    this.gridSquares.push([x, y]);
+                }
+            }
+        }
     }
 
 }
@@ -20,8 +32,8 @@ export default {
     <div v-if="store.errorMessage.length > 0" class="message">{{ store.errorMessage }}</div>
     <div v-else>Current player {{ store.currentPlayer }}</div>
     <div class="grid">
-        <GridSquare v-for="i in (rows * 3)" :number="i"
-            :class="{ 'winning': store.getVictoryCondition().includes(i) }" />
+        <GridSquare v-for="(coords, index) in gridSquares" :coords="coords" :index="index"
+            :class="{ 'winning': store.getVictoryCondition().includes(index) }" />
     </div>
 
 </template>

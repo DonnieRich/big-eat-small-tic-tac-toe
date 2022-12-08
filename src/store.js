@@ -59,6 +59,7 @@ export const store = reactive({
     victoryConditionIndex: -1,
     victoryCondition: [],
     gameEnded: false,
+    rows: 3,
 
     setCurrentPlayer(player) {
         this.currentPlayer = player;
@@ -97,16 +98,16 @@ export const store = reactive({
         this.errorMessage = '';
     },
     checkVictoryConditions() {
-        // checking...
+        // TODO - update as follows: https://stackoverflow.com/a/70744553/12828579
         const currentPlayerSquares = this.gridSquares.filter((square) => square.value === this.currentPlayer);
 
-        if (currentPlayerSquares.length >= 3) {
+        if (currentPlayerSquares.length >= this.rows) {
 
             this.victoryConditionIndex = this.victoryConditions.findIndex((condition) => {
 
                 const checkedCondition = currentPlayerSquares.filter((square) => condition.includes(square.position));
 
-                return checkedCondition.length === 3;
+                return checkedCondition.length === this.rows;
 
             });
 
@@ -117,11 +118,49 @@ export const store = reactive({
         return this.victoryConditionIndex > -1 ? true : false;
 
     },
+    checkVictoryConditionsImproved(currentPlayerSquares = []) {
+
+        // TODO - decide if it's better a recursive function or some other type of check inside the adjacents functions
+        // in order to get 3 adjacent tiles of the same type.
+
+        if (currentPlayerSquares.length === 0) {
+            currentPlayerSquares = this.gridSquares.filter((square) => square.value === this.currentPlayer);
+        }
+
+        if (currentPlayerSquares.length >= this.rows) {
+
+            const winningIndexes = [];
+            currentPlayerSquares.forEach((square, index) => {
+                const vertical = this.findAdjacentVerticalSquares(square.position);
+
+            });
+
+        }
+    },
+    findAdjacentVerticalSquares(coords) {
+        const [x, y] = coords;
+        return [[0, -1], [0, 1]] // all the possible directions
+            .map(([xd, yd]) => ([x + xd, y + yd])) // adjust the starting point
+            .filter(([x, y]) => x >= 0 && x < this.rows && y >= 0 && y < this.rows) // filter out those out of bounds
+    },
+    findAdjacentHorizontalSquares(coords) {
+        const [x, y] = coords;
+        return [[-1, 0], [1, 0]] // all the possible directions
+            .map(([xd, yd]) => ([x + xd, y + yd])) // adjust the starting point
+            .filter(([x, y]) => x >= 0 && x < this.rows && y >= 0 && y < this.rows) // filter out those out of bounds
+    },
+    findAdjacentDiagonalSquares(coords) {
+        const [x, y] = coords;
+        return [[-1, -1], [1, 1], [-1, 1], [1, -1]] // all the possible directions
+            .map(([xd, yd]) => ([x + xd, y + yd])) // adjust the starting point
+            .filter(([x, y]) => x >= 0 && x < this.rows && y >= 0 && y < this.rows) // filter out those out of bounds
+    },
     updateRemainingPieces() {
         this.pieces[this.selectedPieceIndex].available--;
     },
     updateSquares(square) {
-        const index = this.gridSquares.findIndex((gridSquare) => gridSquare.position === square.position);
+        //const index = this.gridSquares.findIndex((gridSquare) => gridSquare.position === square.position);
+        const index = this.gridSquares.findIndex((gridSquare) => gridSquare.position.every((coord) => square.position.includes(coord)));
         if (index > -1) {
             this.gridSquares[index] = square;
         } else {
