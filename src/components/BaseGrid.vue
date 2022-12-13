@@ -10,15 +10,23 @@ export default {
     },
     components: {
         GridSquare,
+    },
+    computed: {
+        messageClasses() {
+            return {
+                'message-danger': this.store.statusMessage.status === 'error',
+                'message-success': this.store.statusMessage.status === 'success',
+            }
+        }
     }
-
 }
 </script>
 
 <template>
 
-    <div v-if="store.errorMessage.length > 0" class="message">{{ store.errorMessage }}</div>
-    <div v-else>Current player {{ store.currentPlayer }}</div>
+    <div v-if="store.statusMessage.text.length > 0" class="message" :class="messageClasses">{{ store.statusMessage.text
+    }}</div>
+    <div v-else class="message message-dark">Current player {{ store.currentPlayer }}</div>
     <div class="grid">
         <GridSquare v-for="i in (rows * 3)" :number="i"
             :class="{ 'winning': store.getVictoryCondition().includes(i) }" />
@@ -37,5 +45,29 @@ export default {
 
 .winning {
     background-color: #67FA19;
+}
+
+.message {
+    padding: 1rem;
+    border-radius: 0.375rem;
+    margin: 1rem 0;
+}
+
+.message-dark {
+    color: #141619;
+    background-color: #d3d3d4;
+    border: 1px solid #bcbebf;
+}
+
+.message-danger {
+    color: #842029;
+    background-color: #f8d7da;
+    border: 1px solid #f5c2c7;
+}
+
+.message-success {
+    color: #0f5132;
+    background-color: #d1e7dd;
+    border: 1px solid #badbcc;
 }
 </style>

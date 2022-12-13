@@ -44,8 +44,11 @@ export const store = reactive({
         },
     ],
     selectedPieceIndex: null,
-    errorMessage: '',
-    showHideErrorMessage: false,
+    statusMessage: {
+        text: '',
+        status: 'info'
+    },
+    showHidestatusMessage: false,
     victoryConditions: [
         [1, 2, 3],
         [4, 5, 6],
@@ -89,12 +92,13 @@ export const store = reactive({
             neighbours: []
         });
     },
-    setErrorMessage(message) {
-        this.errorMessage = message;
-        //this.showHideErrorMessage = true;
+    setStatusMessage(message, status) {
+        this.statusMessage.text = message;
+        this.statusMessage.status = status;
     },
-    clearErrorMessage() {
-        this.errorMessage = '';
+    clearStatusMessage() {
+        this.statusMessage.text = '';
+        this.statusMessage.status = '';
     },
     checkVictoryConditions() {
         // checking...
