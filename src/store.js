@@ -16,13 +16,13 @@ export const store = reactive({
             type: 'B',
             value: 2,
             placeholder: 'M',
-            available: 3
+            available: 2
         },
         {
             type: 'B',
             value: 3,
             placeholder: 'B',
-            available: 3
+            available: 1
         },
         {
             type: 'R',
@@ -34,18 +34,21 @@ export const store = reactive({
             type: 'R',
             value: 2,
             placeholder: 'M',
-            available: 3
+            available: 2
         },
         {
             type: 'R',
             value: 3,
             placeholder: 'B',
-            available: 3
+            available: 1
         },
     ],
     selectedPieceIndex: null,
-    errorMessage: '',
-    showHideErrorMessage: false,
+    statusMessage: {
+        text: '',
+        status: 'info'
+    },
+    showHidestatusMessage: false,
     victoryConditions: [
         [1, 2, 3],
         [4, 5, 6],
@@ -90,12 +93,13 @@ export const store = reactive({
             neighbours: []
         });
     },
-    setErrorMessage(message) {
-        this.errorMessage = message;
-        //this.showHideErrorMessage = true;
+    setStatusMessage(message, status) {
+        this.statusMessage.text = message;
+        this.statusMessage.status = status;
     },
-    clearErrorMessage() {
-        this.errorMessage = '';
+    clearStatusMessage() {
+        this.statusMessage.text = '';
+        this.statusMessage.status = '';
     },
     checkVictoryConditions() {
         // TODO - update as follows: https://stackoverflow.com/a/70744553/12828579

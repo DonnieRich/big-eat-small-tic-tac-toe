@@ -26,18 +26,18 @@ export default {
         setCurrentPiece() {
             if (!store.isGameEnded()) {
                 if (this.checkMove()) {
-                    store.clearErrorMessage();
+                    store.clearStatusMessage();
                     store.updateRemainingPieces();
                     this.currentPiece = store.getCurrentPiece();
                     store.updateSquares({ value: this.currentPiece.type, position: [...this.coords] });
                     if (!store.checkVictoryConditions()) {
                         store.changePlayer();
                     } else {
-                        store.setErrorMessage(`Player ${store.currentPlayer} win!`);
+                        store.setStatusMessage(`Player ${store.currentPlayer} win!`, 'success');
                         store.endGame();
                     }
                 } else {
-                    store.setErrorMessage('Invalid move');
+                    store.setStatusMessage('Invalid move', 'error');
                 }
             }
         },
