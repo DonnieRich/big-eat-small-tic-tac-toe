@@ -16,13 +16,13 @@ export const store = reactive({
             type: 'B',
             value: 2,
             placeholder: 'M',
-            available: 3
+            available: 2
         },
         {
             type: 'B',
             value: 3,
             placeholder: 'B',
-            available: 3
+            available: 1
         },
         {
             type: 'R',
@@ -34,13 +34,13 @@ export const store = reactive({
             type: 'R',
             value: 2,
             placeholder: 'M',
-            available: 3
+            available: 2
         },
         {
             type: 'R',
             value: 3,
             placeholder: 'B',
-            available: 3
+            available: 1
         },
     ],
     selectedPieceIndex: null,
