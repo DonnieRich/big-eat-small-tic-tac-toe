@@ -16,9 +16,12 @@ export default {
     },
     methods: {
         generateSquares() {
-            for (let x = 0; x < this.store.rows; x++) {
-                for (let y = 0; y < this.store.rows; y++) {
-                    this.gridSquares.push([x, y]);
+            for (let y = 0; y < this.store.rows; y++) {
+                for (let x = 0; x < this.store.rows; x++) {
+                    this.store.gridSquares.push({
+                        coords: { x, y },
+                        value: '',
+                    });
                 }
             }
         }
@@ -42,8 +45,8 @@ export default {
     </div>
     <div v-else class="message message-dark">Current player {{ store.currentPlayer }}</div>
     <div class="grid">
-        <GridSquare v-for="(coords, index) in gridSquares" :coords="coords" :index="index"
-            :class="{ 'winning': store.getVictoryCondition().includes(index) }" />
+        <GridSquare v-for="(square, index) in store.gridSquares" :x="square.coords.x" :y="square.coords.y"
+            :index="index" :class="{ 'winning': store.getVictoryCondition().includes(index) }" />
     </div>
 
 </template>

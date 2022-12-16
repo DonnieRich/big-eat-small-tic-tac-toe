@@ -13,7 +13,8 @@ export default {
         BasePiece,
     },
     props: {
-        coords: Array,
+        x: Number,
+        y: Number,
         index: Number,
     },
     methods: {
@@ -29,11 +30,11 @@ export default {
                     store.clearStatusMessage();
                     store.updateRemainingPieces();
                     this.currentPiece = store.getCurrentPiece();
-                    store.updateSquares({ value: this.currentPiece.type, position: [...this.coords] });
-                    if (!store.checkVictoryConditions()) {
+                    store.updateSquares({ value: this.currentPiece.type, coords: { x: this.x, y: this.y } }, this.index);
+                    if (!store.checkVictoryConditionsImproved(this.store.currentPlayer, { x: this.x, y: this.y })) {
                         store.changePlayer();
                     } else {
-                        store.setStatusMessage(`Player ${store.currentPlayer} win!`, 'success');
+                        store.setStatusMessage(`Player ${this.store.currentPlayer} win!`, 'success');
                         store.endGame();
                     }
                 } else {
@@ -59,7 +60,7 @@ export default {
 
     },
     mounted() {
-    }
+    },
 }
 </script>
 
