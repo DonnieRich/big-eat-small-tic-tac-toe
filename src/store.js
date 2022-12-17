@@ -1,4 +1,5 @@
 // store.js
+import { stringifyStyle } from '@vue/shared';
 import { reactive } from 'vue'
 
 export const store = reactive({
@@ -49,19 +50,9 @@ export const store = reactive({
         status: 'info'
     },
     showHidestatusMessage: false,
-    victoryConditions: [
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9],
-        [1, 4, 7],
-        [2, 5, 8],
-        [3, 6, 9],
-        [1, 5, 9],
-        [3, 5, 7],
-    ],
-    victoryConditionIndex: -1,
-    victoryCondition: [],
+    winningSquaresIndexes: [],
     gameEnded: false,
+    rows: 3,
 
     setCurrentPlayer(player) {
         this.currentPlayer = player;
@@ -100,43 +91,109 @@ export const store = reactive({
         this.statusMessage.text = '';
         this.statusMessage.status = '';
     },
-    checkVictoryConditions() {
-        // checking...
-        const currentPlayerSquares = this.gridSquares.filter((square) => square.value === this.currentPlayer);
+    checkVictoryConditions(currentPlayer, currentPlayerSquare, currentPlayerSquares = []) {
 
-        if (currentPlayerSquares.length >= 3) {
+        let winning = false;
 
-            this.victoryConditionIndex = this.victoryConditions.findIndex((condition) => {
-
-                const checkedCondition = currentPlayerSquares.filter((square) => condition.includes(square.position));
-
-                return checkedCondition.length === 3;
-
-            });
-
+        if (currentPlayerSquares.length === 0) {
+            currentPlayerSquares = this.gridSquares.filter((square) => square.type === this.currentPlayer);
         }
 
-        this.setVictoryCondition();
+        if (currentPlayerSquares.length < this.rows) {
+            return false;
+        }
 
-        return this.victoryConditionIndex > -1 ? true : false;
+        // check every direction
+        let squares = []
+        squares.push(...this.findAdjacentVerticalSquares(currentPlayer, currentPlayerSquare));
+        squares.push(...this.findAdjacentHorizontalSquares(currentPlayer, currentPlayerSquare));
+        squares.push(...this.findAdjacentDiagonalSquaresTopLeft(currentPlayer, currentPlayerSquare));
+        squares.push(...this.findAdjacentDiagonalSquaresTopRight(currentPlayer, currentPlayerSquare));
 
+        // check again for the direction with adjacent squares of the same type
+        if (squares.length === 3) {
+            this.setWinningSquaresIndexes(squares);
+            winning = true;
+        }
+
+        return winning;
+
+    },
+    findAdjacentVerticalSquares(currentPlayer, currentPlayerSquare, exclude = []) {
+        return this.findAdjacentSquares([[0, -1], [0, 1]], currentPlayer, currentPlayerSquare, exclude);
+    },
+    findAdjacentHorizontalSquares(currentPlayer, currentPlayerSquare, exclude = []) {
+        return this.findAdjacentSquares([[-1, 0], [1, 0]], currentPlayer, currentPlayerSquare, exclude);
+    },
+    findAdjacentDiagonalSquaresTopLeft(currentPlayer, currentPlayerSquare, exclude = []) {
+        return this.findAdjacentSquares([[-1, -1], [1, 1]], currentPlayer, currentPlayerSquare, exclude);
+    },
+    findAdjacentDiagonalSquaresTopRight(currentPlayer, currentPlayerSquare, exclude = []) {
+        return this.findAdjacentSquares([[-1, 1], [1, -1]], currentPlayer, currentPlayerSquare, exclude);
+    },
+    findAdjacentSquares(directions, currentPlayer, currentPlayerSquare, exclude = [], squares = [], adjacentSquareSameType = 1) {
+
+        // if adjacentSquareSameType === 3, all the winning squares are found and are inside the exclude array
+        if (adjacentSquareSameType === 3) {
+            exclude.push(currentPlayerSquare);
+            return exclude;
+        }
+
+        const { x, y } = currentPlayerSquare.coords;
+
+        if (squares.length === 0) {
+            squares = directions // all the possible directions
+                .map(([xd, yd]) => ([x + xd, y + yd])) // adjust the starting point
+                .filter(([x, y]) => x >= 0 && x < this.rows && y >= 0 && y < this.rows) // filter out those out of bounds
+                .filter(([x, y]) => {
+                    let isToBeIncluded = false;
+                    if (exclude.length === 0) {
+                        // if the exclude array is empty it means there is nothing to be filtered out
+                        isToBeIncluded = true;
+                    } else {
+                        // isToBeIncluded gets the opposite value of the some() function. This means that if the square IS found inside the excluded array, it will be filtered out
+                        isToBeIncluded = !exclude.some(excludedSquare => excludedSquare.coords.x === x && excludedSquare.coords.y === y);
+                    }
+                    return isToBeIncluded;
+                })
+                .filter(([x, y]) => this.gridSquares.some(square => square.coords.x === x && square.coords.y === y && square.type === currentPlayer)) // filter out those with the other player piece on it
+        }
+
+        if (squares.length > 0) {
+            // updating the number of squares found
+            adjacentSquareSameType++;
+
+            // add the current square to the excluded list
+            exclude.push(currentPlayerSquare);
+
+            // get the coords for the first of the adjacent squares found
+            const coords = { x: squares[0][0], y: squares[0][1] };
+
+            // remove the element from the array
+            squares.shift();
+
+            // continue the search
+            return this.findAdjacentSquares(directions, currentPlayer, { coords }, exclude, squares, adjacentSquareSameType);
+        }
+
+        // if we find nothing, we return an empty array
+        return [];
+
+    },
+    setWinningSquaresIndexes(squares) {
+        const winningSquaresIndexes = squares.map((square) => {
+            return this.gridSquares.findIndex(gridSquare => gridSquare.coords.x === square.coords.x && gridSquare.coords.y === square.coords.y)
+        });
+        this.winningSquaresIndexes = winningSquaresIndexes;
     },
     updateRemainingPieces() {
         this.pieces[this.selectedPieceIndex].available--;
     },
-    updateSquares(square) {
-        const index = this.gridSquares.findIndex((gridSquare) => gridSquare.position === square.position);
-        if (index > -1) {
-            this.gridSquares[index] = square;
-        } else {
-            this.gridSquares.push(square);
-        }
+    updateSquares(square, index) {
+        this.gridSquares[index] = { ...square };
     },
     getVictoryCondition() {
-        return [...this.victoryCondition];
-    },
-    setVictoryCondition() {
-        this.victoryCondition = this.victoryConditionIndex > -1 ? [...this.victoryConditions[this.victoryConditionIndex]] : [];
+        return [...this.winningSquaresIndexes];
     },
     isGameEnded() {
         return this.gameEnded;

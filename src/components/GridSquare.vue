@@ -13,7 +13,9 @@ export default {
         BasePiece,
     },
     props: {
-        number: Number,
+        x: Number,
+        y: Number,
+        index: Number,
     },
     methods: {
         setOccupied() {
@@ -23,20 +25,20 @@ export default {
             return this.currentPiece.value ?? 0;
         },
         setCurrentPiece() {
-            if (!store.isGameEnded()) {
+            if (!this.store.isGameEnded()) {
                 if (this.checkMove()) {
-                    store.clearStatusMessage();
-                    store.updateRemainingPieces();
-                    this.currentPiece = store.getCurrentPiece();
-                    store.updateSquares({ value: this.currentPiece.type, position: this.number });
-                    if (!store.checkVictoryConditions()) {
-                        store.changePlayer();
+                    this.store.clearStatusMessage();
+                    this.store.updateRemainingPieces();
+                    this.currentPiece = this.store.getCurrentPiece();
+                    this.store.updateSquares({ type: this.currentPiece.type, value: this.currentPiece.value, coords: { x: this.x, y: this.y } }, this.index);
+                    if (!this.store.checkVictoryConditions(this.store.currentPlayer, { coords: { x: this.x, y: this.y } })) {
+                        this.store.changePlayer();
                     } else {
-                        store.setStatusMessage(`Player ${store.currentPlayer} win!`, 'success');
-                        store.endGame();
+                        this.store.setStatusMessage(`Player ${this.store.currentPlayer} win!`, 'success');
+                        this.store.endGame();
                     }
                 } else {
-                    store.setStatusMessage('Invalid move', 'error');
+                    this.store.setStatusMessage('Invalid move', 'error');
                 }
             }
         },
@@ -44,21 +46,14 @@ export default {
             return this.currentPiece.type ?? '';
         },
         checkMove() {
-            /*const moveDelta = store.getCurrentPiece().value - this.checkCurrentPiece();
-            const smallestPieceAvailable = store.getPieces().find( (piece) => piece.available > 0 && piece.type === store.currentPlayer);
-            const smallestAvailableDelta = smallestPieceAvailable.value - this.checkCurrentPiece();*/
-
-            //return moveDelta === smallestAvailableDelta && moveDelta > 0;
-
-            return store.getCurrentPiece().value > this.checkCurrentPiece() && this.currentPiece.type !== store.getCurrentPiece().type;
-
+            return this.store.getCurrentPiece().value > this.checkCurrentPiece() && this.currentPiece.type !== this.store.getCurrentPiece().type;
         }
     },
     computed: {
 
     },
     mounted() {
-    }
+    },
 }
 </script>
 
