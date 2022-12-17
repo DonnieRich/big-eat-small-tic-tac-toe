@@ -34,7 +34,12 @@ export default {
                     if (!this.store.checkVictoryConditions(this.store.currentPlayer, { coords: { x: this.x, y: this.y } })) {
                         this.store.changePlayer();
                     } else {
-                        this.store.setStatusMessage(`Player ${this.store.currentPlayer} win!`, 'success');
+                        let message = `Player ${this.store.currentPlayer} win!`;
+                        if (this.store.winningSquaresIndexes.length > 3) {
+                            message = `Player ${this.store.currentPlayer} OUTSTANDING VICTORY!`;
+                        }
+
+                        this.store.setStatusMessage(message, 'success');
                         this.store.endGame();
                     }
                 } else {

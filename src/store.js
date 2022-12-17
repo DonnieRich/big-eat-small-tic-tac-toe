@@ -111,7 +111,8 @@ export const store = reactive({
         squares.push(...this.findAdjacentDiagonalSquaresTopRight(currentPlayer, currentPlayerSquare));
 
         // check again for the direction with adjacent squares of the same type
-        if (squares.length === 3) {
+        // using the modulo operator for the rare cases where a player can win on more than one row at the same time
+        if (squares.length !== 0 && squares.length % 3 === 0) {
             this.setWinningSquaresIndexes(squares);
             winning = true;
         }
