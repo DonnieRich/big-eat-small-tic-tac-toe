@@ -12,20 +12,21 @@ export default {
         GridSquare,
     },
     mounted() {
-        this.generateSquares();
+        this.store.generateSquares();
+        this.store.setStartingPieces();
     },
     methods: {
-        generateSquares() {
-            for (let y = 0; y < this.store.rows; y++) {
-                for (let x = 0; x < this.store.rows; x++) {
-                    this.store.gridSquares.push({
-                        coords: { x, y },
-                        type: '',
-                        value: 0,
-                    });
-                }
-            }
-        }
+        // generateSquares() {
+        //     for (let y = 0; y < this.store.rows; y++) {
+        //         for (let x = 0; x < this.store.rows; x++) {
+        //             this.store.gridSquares.push({
+        //                 coords: { x, y },
+        //                 type: '',
+        //                 value: 0,
+        //             });
+        //         }
+        //     }
+        // }
     },
     computed: {
         messageClasses() {

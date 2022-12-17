@@ -6,7 +6,7 @@ export const store = reactive({
     currentPlayer: 'B',
     currentPiece: {},
     gridSquares: [],
-    pieces: [
+    originalPieces: [
         {
             type: 'B',
             value: 1,
@@ -44,6 +44,7 @@ export const store = reactive({
             available: 1
         },
     ],
+    pieces: [],
     selectedPieceIndex: null,
     statusMessage: {
         text: '',
@@ -51,6 +52,7 @@ export const store = reactive({
     },
     showHidestatusMessage: false,
     winningSquaresIndexes: [],
+    winningHistory: [],
     gameEnded: false,
     rows: 3,
 
@@ -77,11 +79,27 @@ export const store = reactive({
     clearSelectedPieceIndex() {
         this.setSelectedPieceIndex(null);
     },
-    setGridSquare(number) {
-        this.gridSquares.push({
-            number: number,
-            neighbours: []
-        });
+    // setGridSquare(number) {
+    //     this.gridSquares.push({
+    //         number: number,
+    //         neighbours: []
+    //     });
+    // },
+    generateSquares() {
+        this.gridSquares = [];
+        for (let y = 0; y < this.rows; y++) {
+            for (let x = 0; x < this.rows; x++) {
+                this.gridSquares.push({
+                    coords: { x, y },
+                    type: '',
+                    value: 0,
+                });
+            }
+        }
+    },
+    setStartingPieces() {
+        this.pieces = [];
+        this.pieces = [...this.originalPieces];
     },
     setStatusMessage(message, status) {
         this.statusMessage.text = message;
@@ -114,6 +132,7 @@ export const store = reactive({
         // using the modulo operator for the rare cases where a player can win on more than one row at the same time
         if (squares.length !== 0 && squares.length % 3 === 0) {
             this.setWinningSquaresIndexes(squares);
+            this.addToWinningHistory({ player: currentPlayer, points: squares.length });
             winning = true;
         }
 
@@ -187,6 +206,12 @@ export const store = reactive({
         });
         this.winningSquaresIndexes = winningSquaresIndexes;
     },
+    addToWinningHistory(winner) {
+        if (this.winningHistory.length > 5) {
+            this.winningHistory.shift();
+        }
+        this.winningHistory.push(winner);
+    },
     updateRemainingPieces() {
         this.pieces[this.selectedPieceIndex].available--;
     },
@@ -201,6 +226,12 @@ export const store = reactive({
     },
     endGame() {
         this.gameEnded = true;
+    },
+    startNewGame() {
+        this.generateSquares();
+        this.setStartingPieces();
+        this.changePlayer();
+        this.gameEnded = false;
     }
 
 })
