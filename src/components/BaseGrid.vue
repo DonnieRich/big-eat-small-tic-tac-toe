@@ -20,7 +20,8 @@ export default {
                 for (let x = 0; x < this.store.rows; x++) {
                     this.store.gridSquares.push({
                         coords: { x, y },
-                        value: '',
+                        type: '',
+                        value: 0,
                     });
                 }
             }
